@@ -4,7 +4,7 @@ import { useChat } from "ai/react";
 import InputForm from "@/components/input";
 
 export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat('@/app/api/chat');
+  const { messages, input, handleInputChange, handleSubmit } = useChat({api: "@/app/api/chat"});
 
   return (
     <main className="dark">
