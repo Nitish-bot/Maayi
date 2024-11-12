@@ -1,7 +1,11 @@
-import { generateText } from "ai"
 import { google } from "@ai-sdk/google"
+import { streamText } from "ai"
 
-const { text } = await generateText({
-  model: google("models/gemini-1.5-pro-latest"),
-  prompt: "What is love?"
-});
+export async function POST(request: Request) {
+  const { userInput } = await request.json();
+  const text = await streamText({
+    model: google("models/gemini-1.5-pro-latest"),
+    prompt: userInput,
+  });
+  return text.toTextStreamResponse();
+}
