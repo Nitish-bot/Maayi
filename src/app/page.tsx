@@ -9,7 +9,7 @@ export default function Home() {
   return (
     <main className="dark">
       {/* form */}
-      <InputForm props={{input, handleSubmit, handleInputChange}}></InputForm>
+      <InputForm input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit}></InputForm>
       <div >
         {messages.map( message => (
           <div key={message.id} className="">
