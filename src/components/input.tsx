@@ -5,21 +5,16 @@ import { Input } from "@/components/ui/input";
 import {
   IconSend,
 } from "@tabler/icons-react";
+import type { HandleSubmit } from "@/types";
 
-type InputFormProps = {
-  input: string;
-  handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-}
-
-export default function InputForm({input, handleInputChange, handleSubmit} :InputFormProps) {
+export default function InputForm(handleSubmit :HandleSubmit) {
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input dark:bg-black">
       <form onSubmit={handleSubmit}>
         <div className="flex flex-row items-center justify-center md:space-x-2 mb-4">
 
           <div className="flex flex-col space-y-2 w-full">
-            <Input id="firstname" placeholder="Puchiye.. " type="text" value={input} onChange={handleInputChange}/>
+            <Input id="query" placeholder="Puchiye.. " type="text"/>
           </div>
 
           <div className="flex flex-row align-middle items-center h-full w-auto">

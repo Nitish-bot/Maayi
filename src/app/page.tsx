@@ -1,22 +1,77 @@
 "use client";
 
-import { useChat } from "ai/react";
+import React, { useState } from "react";
 import InputForm from "@/components/input";
+import { Message } from "@/types";
 
 export default function Home() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat({api: "@/app/api/chat"});
+  const [formQuery, setFormQuery] = useState<string>("");
+  const [messages ,setMessages] = useState<Array<Message>>([]);
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setFormQuery(event.target.value);
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>)
+      : Promise<void> => {
+    event.preventDefault();
+
+    try {
+      const newUserMessage: Message = {
+        id: messages.length,
+        role: "user",
+        content: formQuery,
+      };
+
+      setMessages(messages.concat(newUserMessage));
+
+      const response = await fetch("@/app/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUserMessage),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const newModelMessage: Message = {
+          id: messages.length,
+          role: "model",
+          content: data,
+        }
+        setMessages(messages.concat(newModelMessage));
+      }
+    } catch (error) {
+      console.error(error);
+    }
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ messages }),
+    });
+    const data = await response.json();
+    setMessages(data);
+
+    return new Promise<void>((resolve) => {
+      resolve();
+    });
+  };
   return (
     <main className="dark">
       {/* form */}
-      <InputForm input={input} handleInputChange={handleInputChange} handleSubmit={handleSubmit}></InputForm>
-      <div >
-        {messages.map( message => (
-          <div key={message.id} className="">
-            <div>{message.content}</div>
-          </div>
-        ))}
-      </div>
+      <InputForm handleSubmit={handleSubmit}></InputForm>
+      {messages && (
+        <div >
+          {messages.map( message => (
+            <div key={message.id} className="">
+              <div>{message.content}</div>
+            </div>
+          ))}
+        </div>
+      )}
     </main>
   );
 }
