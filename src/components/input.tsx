@@ -5,16 +5,16 @@ import { Input } from "@/components/ui/input";
 import {
   IconSend,
 } from "@tabler/icons-react";
-import type { HandleSubmit } from "@/types";
+import type { HandleSubmit, HandleOnChange } from "@/types";
 
-export default function InputForm(handleSubmit :HandleSubmit) {
+export default function InputForm({handleSubmit , handleInputChange}: {handleSubmit: HandleSubmit, handleInputChange: HandleOnChange}) {
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input dark:bg-black">
       <form onSubmit={handleSubmit}>
         <div className="flex flex-row items-center justify-center md:space-x-2 mb-4">
 
           <div className="flex flex-col space-y-2 w-full">
-            <Input id="query" placeholder="Puchiye.. " type="text"/>
+            <Input id="query" placeholder="Puchiye.. " type="text" onChange={handleInputChange}/>
           </div>
 
           <div className="flex flex-row align-middle items-center h-full w-auto">

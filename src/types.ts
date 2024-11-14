@@ -1,9 +1,11 @@
-type HandleSubmit = (event: React.FormEvent<HTMLFormElement>) => void;
+type HandleSubmit = (event: React.FormEvent<HTMLFormElement>) => Promise<void>;
+
+type HandleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => void;
 
 type Message = {
-    id: Number;
+    id: React.Key;
     role: string;
     content: string;
 }
 
-export type { HandleSubmit, Message};
+export type { HandleSubmit, HandleOnChange, Message};

@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import InputForm from "@/components/input";
-import { Message } from "@/types";
+import { Message, HandleSubmit } from "@/types";
 
 export default function Home() {
   const [formQuery, setFormQuery] = useState<string>("");
@@ -10,10 +10,10 @@ export default function Home() {
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setFormQuery(event.target.value);
+    return;
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>)
-      : Promise<void> => {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     try {
@@ -62,10 +62,10 @@ export default function Home() {
   return (
     <main className="dark">
       {/* form */}
-      <InputForm handleSubmit={handleSubmit}></InputForm>
+      <InputForm handleSubmit={handleSubmit} handleInputChange={handleInputChange}></InputForm>
       {messages && (
         <div >
-          {messages.map( message => (
+          {messages.map((message :Message) => (
             <div key={message.id} className="">
               <div>{message.content}</div>
             </div>
