@@ -1,77 +1,55 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputForm from "@/components/input";
-import { Message, HandleSubmit } from "@/types";
+import { Message } from "@/types";
 
 export default function Home() {
-  const [formQuery, setFormQuery] = useState<string>("");
-  const [messages ,setMessages] = useState<Array<Message>>([]);
+  const [formQuery, setFormQuery] = useState<string>("q");
+  const [messages, setMessages] = useState<Array<Message>>([]);
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setFormQuery(event.target.value);
-    return;
-  };
-
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    try {
-      const newUserMessage: Message = {
-        id: messages.length,
-        role: "user",
-        content: formQuery,
-      };
-
-      setMessages(messages.concat(newUserMessage));
-
-      const response = await fetch("@/app/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUserMessage),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        const newModelMessage: Message = {
-          id: messages.length,
-          role: "model",
-          content: data,
-        }
-        setMessages(messages.concat(newModelMessage));
+  useEffect(() => {
+    const handleSetMessages = async () => {
+      console.log("Messages:", messages);
+      if (messages.length % 2 !== 0) {
+        const requestMessages = JSON.stringify(messages);
+        const response =  await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: requestMessages,
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          const newModelMessage: Message = {
+            id: messages.length,
+            role: "model",
+            content: data,
+          }
+          setMessages(prevMessages => [...prevMessages, newModelMessage]);
+          console.log(messages);
+        }    
       }
-    } catch (error) {
-      console.error(error);
-    }
-    const response = await fetch("/api/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ messages }),
-    });
-    const data = await response.json();
-    setMessages(data);
+    };
+    handleSetMessages();
+  }, [messages]);
 
-    return new Promise<void>((resolve) => {
-      resolve();
-    });
+  const handleSetFormQuery = async (query: string) => {
+    setFormQuery(query);
   };
+
+  const handleSetMessage = (message: Message) => {
+    setMessages(prevMessages => [...prevMessages, message]);
+  };
+
+
   return (
     <main className="dark">
       {/* form */}
-      <InputForm handleSubmit={handleSubmit} handleInputChange={handleInputChange}></InputForm>
-      {messages && (
-        <div >
-          {messages.map((message :Message) => (
-            <div key={message.id} className="">
-              <div>{message.content}</div>
-            </div>
-          ))}
-        </div>
-      )}
+      <InputForm formQuery={formQuery} handleSetFormQuery={handleSetFormQuery} messages={messages} setMessages={handleSetMessage} />
+
     </main>
   );
 }

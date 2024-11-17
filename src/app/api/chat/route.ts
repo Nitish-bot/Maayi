@@ -1,23 +1,28 @@
 import { getGeminiResponse } from "@/lib/gemini";
-import { NextRequest, NextResponse } from "next/server";
 import type { Message } from "@/types";
 
-export async function POST(request: NextRequest) {
-  const requestBody= await request.json();
-  const messages: Message[] = requestBody.messages;
+export async function POST(req: Request) {
+  const messages :Message[] = JSON.parse(await req.text());
 
   try {
     const stream = await getGeminiResponse(messages);
-
-    return new NextResponse(stream, {
+    console.log("Gemini input received in route");
+    return new Response(JSON.stringify(stream), {
       headers: {
-        "Content-Control": "no-cache",
-        "Content-Type": "text/plain; charsett=utf-8",
-        "Transfer-Encoding": "chunked",
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/json",
       },
     });
   } 
   catch (error) {
-    return NextResponse.error();
+    return new Response(
+      JSON.stringify({ error: `Failed! with error ${error}` }),
+      {
+        status: 300,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 } 
