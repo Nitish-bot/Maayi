@@ -3,14 +3,9 @@ import { GoogleGenerativeAI as google,
   HarmBlockThreshold,
  } from "@google/generative-ai";
 import type { Message } from "@/types";
- 
-
-
 
 // ACTUAL FUNCTION WE ARE EXPORTING
-// Exposing a simple getGeminiResponse that can be
-// accessed by a route handler
-
+// Exposing a simple getGeminiResponse that can be accessed by a route handler
 export async function getGeminiResponse(messages: Message[]): Promise<string> {
   // Validation of API key
   const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY;
@@ -45,8 +40,6 @@ export async function getGeminiResponse(messages: Message[]): Promise<string> {
   ];
   
   const AI = genAI.getGenerativeModel({model, systemInstruction, safetySettings});
-  
-  console.log(`Messages input in gemini: ${messages}`);
 
   const history = messages.map((message) => ({
     role: message.role,
